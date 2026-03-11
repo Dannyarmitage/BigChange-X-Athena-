@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigChange Cash Flow Optimizer</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Chosen Palette: Warm Professional
+         Backgrounds: Stone-50 to Stone-100 (Warm Neutrals)
+         Text: Slate-800 (Deep Grey) for readability
+         Accents: Emerald-600 (Growth/Money) and Amber-500 (Alerts/Action)
+    -->
+
+    <style>
+        /* Chart Container Styling - MANDATORY */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px; /* Constrain max width for readability */
+            margin-left: auto;
+            margin-right: auto;
+            height: 40vh; /* Responsive height */
+            max-height: 400px; /* Absolute max height */
+        }
+        
+        @media (max-width: 640px) {
+            .chart-container {
+                height: 300px;
+            }
+        }
+
+        /* Smooth transitions for interactive elements */
+        .interactive-card {
+            transition: all 0.3s ease;
+        }
+        .interactive-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Custom scrollbar for cleaner look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f5f5f4; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d6d3d1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a29e; 
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-slate-800 font-sans leading-relaxed selection:bg-emerald-100 selection:text-emerald-900">
+
+    <!-- Application Structure Plan:
+         1. Header: Branding and core value proposition.
+         2. The Cash Flow Cycle (Interactive): A linear step-by-step view comparing old ways vs. BigChange to demonstrate "Accelerated Invoicing".
+         3. Feature Ecosystem (Grid): Interactive cards for On-Site Pay, Accuracy, Integrations, and Credit Control.
+         4. Financial Visibility (Dashboard): A Chart.js driven section allowing users to visualize the "BI Tools" section (Debtor Days, Profitability).
+         5. Summary & Takeaways: Tabular data summary and impact metrics.
+    -->
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-stone-50/90 backdrop-blur-md border-b border-stone-200 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">⚡</span>
+                    <h1 class="font-bold text-xl tracking-tight text-slate-900">Cash Flow<span class="text-emerald-600">Optimizer</span></h1>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <button onclick="scrollToSection('hero')" class="text-stone-600 hover:text-emerald-600 font-medium transition-colors">Overview</button>
+                    <button onclick="scrollToSection('cycle-simulation')" class="text-stone-600 hover:text-emerald-600 font-medium transition-colors">The Cycle</button>
+                    <button onclick="scrollToSection('features')" class="text-stone-600 hover:text-emerald-600 font-medium transition-colors">Key Features</button>
+                    <button onclick="scrollToSection('bi-dashboard')" class="text-stone-600 hover:text-emerald-600 font-medium transition-colors">BI Dashboard</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Wrapper -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-16">
+
+        <!-- Hero Section -->
+        <section id="hero" class="text-center py-10 sm:py-16">
+            <div class="inline-block px-4 py-1.5 mb-6 rounded-full bg-emerald-100 text-emerald-800 text-sm font-semibold tracking-wide uppercase">
+                Field Service Management
+            </div>
+            <h2 class="text-4xl sm:text-5xl font-extrabold text-slate-900 mb-6 tracking-tight">
+                Transform Your <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">Cash Flow</span>
+            </h2>
+            <p class="max-w-2xl mx-auto text-lg text-stone-600 mb-8">
+                Digitize the entire field service lifecycle to shorten the "quote-to-cash" cycle. Move from paper-based delays to real-time financial health.
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <div class="bg-white px-6 py-4 rounded-xl shadow-sm border border-stone-200 flex items-center gap-3">
+                    <span class="text-2xl">📉</span>
+                    <div class="text-left">
+                        <p class="text-xs text-stone-500 uppercase font-bold">Outcome</p>
+                        <p class="font-bold text-slate-900">Reduced Debtor Days</p>
+                    </div>
+                </div>
+                <div class="bg-white px-6 py-4 rounded-xl shadow-sm border border-stone-200 flex items-center gap-3">
+                    <span class="text-2xl">🚀</span>
+                    <div class="text-left">
+                        <p class="text-xs text-stone-500 uppercase font-bold">Efficiency</p>
+                        <p class="font-bold text-slate-900">Same-Day Billing</p>
+                    </div>
+                </div>
+                <div class="bg-white px-6 py-4 rounded-xl shadow-sm border border-stone-200 flex items-center gap-3">
+                    <span class="text-2xl">💼</span>
+                    <div class="text-left">
+                        <p class="text-xs text-stone-500 uppercase font-bold">Admin</p>
+                        <p class="font-bold text-slate-900">25% Less Paperwork</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 1: The Interactive Cash Flow Cycle -->
+        <section id="cycle-simulation" class="scroll-mt-24">
+            <div class="mb-8 border-l-4 border-emerald-500 pl-4">
+                <h3 class="text-2xl font-bold text-slate-900">The "Quote-to-Cash" Acceleration</h3>
+                <p class="text-stone-600 mt-2">
+                    Traditional paper-based systems introduce friction at every step. Interact with the stages below to see how BigChange accelerates the process through <strong>Real-Time Data Capture</strong> and <strong>Immediate Invoice Generation</strong>.
+                </p>
+            </div>
+
+            <!-- Interactive Timeline -->
+            <div class="bg-white rounded-2xl shadow-lg border border-stone-200 p-6 md:p-8">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8 relative">
+                    <!-- Connection Line (Desktop) -->
+                    <div class="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-stone-200 -z-10 transform -translate-y-1/2"></div>
+                    
+                    <!-- Step 1 -->
+                    <button onclick="updateCycle('job')" class="cycle-btn group relative flex flex-col items-center bg-white p-4 rounded-xl border-2 border-emerald-500 hover:bg-emerald-50 transition-colors w-full md:w-1/3 z-10 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+                        <span class="text-3xl mb-2">🔧</span>
+                        <span class="font-bold text-slate-800">1. Job Completion</span>
+                        <span class="absolute -bottom-10 opacity-0 group-hover:opacity-100 transition-opacity text-xs bg-slate-800 text-white px-2 py-1 rounded">Click to explore</span>
+                    </button>
+
+                    <!-- Arrow Mobile -->
+                    <span class="md:hidden text-stone-300 text-xl">⬇️</span>
+
+                    <!-- Step 2 -->
+                    <button onclick="updateCycle('invoice')" class="cycle-btn group relative flex flex-col items-center bg-white p-4 rounded-xl border-2 border-stone-200 hover:border-emerald-400 hover:bg-emerald-50 transition-colors w-full md:w-1/3 z-10 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+                        <span class="text-3xl mb-2">📄</span>
+                        <span class="font-bold text-slate-800">2. Invoicing</span>
+                    </button>
+
+                    <!-- Arrow Mobile -->
+                    <span class="md:hidden text-stone-300 text-xl">⬇️</span>
+
+                    <!-- Step 3 -->
+                    <button onclick="updateCycle('payment')" class="cycle-btn group relative flex flex-col items-center bg-white p-4 rounded-xl border-2 border-stone-200 hover:border-emerald-400 hover:bg-emerald-50 transition-colors w-full md:w-1/3 z-10 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+                        <span class="text-3xl mb-2">💳</span>
+                        <span class="font-bold text-slate-800">3. Payment</span>
+                    </button>
+                </div>
+
+                <!-- Dynamic Content Display -->
+                <div id="cycle-content" class="bg-stone-50 rounded-xl p-6 border border-stone-200 min-h-[180px]">
+                    <!-- Content injected by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Core Feature Grid -->
+        <section id="features" class="scroll-mt-24">
+            <div class="mb-8">
+                <h3 class="text-2xl font-bold text-slate-900">Features Driving Cash Flow</h3>
+                <p class="text-stone-600 mt-2">Explore the tools that eliminate administrative errors and facilitate instant payments.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- Feature 1: BigChange Pay -->
+                <div class="interactive-card bg-white p-6 rounded-xl border border-stone-200 shadow-sm flex flex-col">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-3 bg-blue-100 rounded-lg text-blue-600 text-xl">💳</div>
+                        <h4 class="font-bold text-lg text-slate-900">On-Site Payments</h4>
+                    </div>
+                    <p class="text-stone-600 text-sm flex-grow">BigChange Pay allows technicians to take credit or debit card payments directly at the job site.</p>
+                    <div class="mt-4 pt-4 border-t border-stone-100 text-sm space-y-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-emerald-500">✓</span>
+                            <span><strong>Instant Settlement:</strong> Eliminates credit control for small jobs.</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-emerald-500">✓</span>
+                            <span><strong>Convenience:</strong> "Pay now" options via app or email link.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 2: Accuracy & Disputes -->
+                <div class="interactive-card bg-white p-6 rounded-xl border border-stone-200 shadow-sm flex flex-col">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-3 bg-purple-100 rounded-lg text-purple-600 text-xl">🛡️</div>
+                        <h4 class="font-bold text-lg text-slate-900">Reduced Disputes</h4>
+                    </div>
+                    <p class="text-stone-600 text-sm flex-grow">Disputed invoices cause bottlenecks. Digital audit trails ensure every job is backed by proof.</p>
+                    <div class="mt-4 pt-4 border-t border-stone-100 text-sm space-y-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-emerald-500">✓</span>
+                            <span><strong>Proof:</strong> GPS stamps, photos, and signatures.</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-emerald-500">✓</span>
+                            <span><strong>Auto Price Lists:</strong> Prevents under-billing errors.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 3: Accounting Integration -->
+                <div class="interactive-card bg-white p-6 rounded-xl border border-stone-200 shadow-sm flex flex-col">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-3 bg-orange-100 rounded-lg text-orange-600 text-xl">🔄</div>
+                        <h4 class="font-bold text-lg text-slate-900">Seamless Integrations</h4>
+                    </div>
+                    <p class="text-stone-600 text-sm flex-grow">Direct integration with Sage, Xero, and QuickBooks eliminates double-keying.</p>
+                    <div class="mt-4 pt-4 border-t border-stone-100 text-sm space-y-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-emerald-500">✓</span>
+                            <span><strong>Sync:</strong> Field data flows directly to accounts.</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-emerald-500">✓</span>
+                            <span><strong>Visibility:</strong> Real-time "on stop" status updates.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 4: Automated Control -->
+                <div class="interactive-card bg-white p-6 rounded-xl border border-stone-200 shadow-sm flex flex-col">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-3 bg-red-100 rounded-lg text-red-600 text-xl">⏰</div>
+                        <h4 class="font-bold text-lg text-slate-900">Automated Credit Control</h4>
+                    </div>
+                    <p class="text-stone-600 text-sm flex-grow">Automate the "chase" to save time and ensure predictable revenue.</p>
+                    <div class="mt-4 pt-4 border-t border-stone-100 text-sm space-y-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-emerald-500">✓</span>
+                            <span><strong>Notifications:</strong> Alerts for overdue invoices.</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-emerald-500">✓</span>
+                            <span><strong>Pipeline:</strong> Auto-reminders for due services.</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Section 3: Business Intelligence (BI) Dashboard -->
+        <section id="bi-dashboard" class="scroll-mt-24">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-4">
+                <div class="md:w-2/3">
+                    <h3 class="text-2xl font-bold text-slate-900">Real-Time Financial Visibility</h3>
+                    <p class="text-stone-600 mt-2">
+                        "You cannot manage what you cannot see." Use the interactive dashboard below to visualize how BigChange BI tools track performance.
+                    </p>
+                </div>
+                <!-- Dashboard Controls -->
+                <div class="flex bg-white p-1 rounded-lg border border-stone-300 shadow-sm">
+                    <button onclick="renderChart('debtorDays')" id="btn-debtor" class="px-4 py-2 text-sm font-medium rounded-md transition-colors bg-emerald-100 text-emerald-800 shadow-sm">Debtor Days</button>
+                    <button onclick="renderChart('profitability')" id="btn-profit" class="px-4 py-2 text-sm font-medium rounded-md transition-colors text-stone-600 hover:bg-stone-100">Profitability</button>
+                    <button onclick="renderChart('forecast')" id="btn-forecast" class="px-4 py-2 text-sm font-medium rounded-md transition-colors text-stone-600 hover:bg-stone-100">Forecast</button>
+                </div>
+            </div>
+
+            <!-- Chart Container -->
+            <div class="bg-white rounded-2xl shadow-lg border border-stone-200 p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h4 id="chart-title" class="font-bold text-slate-700">Average Debtor Days</h4>
+                    <span id="chart-insight" class="text-xs bg-stone-100 text-stone-600 px-2 py-1 rounded border border-stone-200">Implementation Impact</span>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="biChart"></canvas>
+                </div>
+
+                <div id="chart-explanation" class="mt-6 p-4 bg-stone-50 rounded-lg border border-stone-200 text-sm text-stone-700">
+                    <!-- Dynamic text explanation -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Summary & Impact -->
+        <section class="bg-slate-900 rounded-3xl p-8 sm:p-12 text-center text-white relative overflow-hidden">
+            <!-- Decorative circle -->
+            <div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-emerald-500 rounded-full opacity-10 blur-3xl"></div>
+            
+            <h3 class="text-3xl font-bold mb-6 relative z-10">Summary of Impact</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10 text-left">
+                <div class="p-4 bg-white/10 rounded-xl backdrop-blur-sm border border-white/10">
+                    <div class="text-emerald-400 font-bold mb-1">Mobile App</div>
+                    <div class="text-sm text-slate-300">Removes paper delays, enabling same-day billing.</div>
+                </div>
+                <div class="p-4 bg-white/10 rounded-xl backdrop-blur-sm border border-white/10">
+                    <div class="text-emerald-400 font-bold mb-1">Digital Evidence</div>
+                    <div class="text-sm text-slate-300">Reduces invoice disputes and shortens payment cycles.</div>
+                </div>
+                <div class="p-4 bg-white/10 rounded-xl backdrop-blur-sm border border-white/10">
+                    <div class="text-emerald-400 font-bold mb-1">Integrations</div>
+                    <div class="text-sm text-slate-300">Eliminates manual data entry errors.</div>
+                </div>
+                <div class="p-4 bg-white/10 rounded-xl backdrop-blur-sm border border-white/10">
+                    <div class="text-emerald-400 font-bold mb-1">BI Reporting</div>
+                    <div class="text-sm text-slate-300">Identifies poor-paying customers & high-margin work.</div>
+                </div>
+            </div>
+            
+            <div class="mt-10 pt-8 border-t border-slate-700">
+                <p class="text-slate-400 italic mb-4">"Many businesses see their debtor days drop significantly within the first 90 days."</p>
+                <button class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-8 rounded-full transition-colors shadow-lg shadow-emerald-900/50">
+                    Start Optimizing Cash Flow
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-stone-100 py-8 border-t border-stone-200 mt-12">
+        <div class="max-w-6xl mx-auto px-4 text-center text-stone-500 text-sm">
+            <p>© 2024 BigChange Analysis Dashboard. Generated from Source Report.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // State Management
+        const appState = {
+            activeCycleStep: 'job',
+            activeChart: 'debtorDays',
+            chartInstance: null
+        };
+
+        // Data for Cycle Simulation
+        const cycleData = {
+            job: {
+                title: "Step 1: Job Completion",
+                traditional: "Paper job sheets lost in van, delayed return to office, missing details.",
+                bigchange: "Technician completes job on app. Photos, parts, and time synced instantly to office.",
+                impact: "Real-Time Data Capture eliminates 'dead time'."
+            },
+            invoice: {
+                title: "Step 2: Invoicing",
+                traditional: "Manual data entry from paper. Errors lead to queries. Invoices sent days/weeks later.",
+                bigchange: "Invoice generated immediately upon job completion. Emailed to customer instantly.",
+                impact: "Reduced Work In Progress (WIP) & faster billing."
+            },
+            payment: {
+                title: "Step 3: Payment",
+                traditional: "Wait for monthly run or chase overdue checks. Disputes delay settlement.",
+                bigchange: "BigChange Pay allows on-site card payments. Automated chasers for invoice payments.",
+                impact: "Instant Settlement & Automated Credit Control."
+            }
+        };
+
+        // Data for BI Dashboard Charts
+        const chartData = {
+            debtorDays: {
+                type: 'line',
+                labels: ['Month 1', 'Month 2', 'Month 3', 'Month 4', 'Month 5', 'Month 6'],
+                datasets: [
+                    {
+                        label: 'Average Debtor Days (Traditional)',
+                        data: [65, 63, 64, 62, 65, 63],
+                        borderColor: '#9ca3af', // Gray
+                        borderDash: [5, 5],
+                        fill: false,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'With BigChange',
+                        data: [65, 50, 42, 35, 30, 28],
+                        borderColor: '#059669', // Emerald 600
+                        backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }
+                ],
+                title: "Impact on Debtor Days",
+                insight: "Significant Reduction",
+                explanation: "Monitor how long it takes for customers to pay. Visualizing this trend helps identify if automated reminders and instant invoicing are working effectively. The goal is to see the green line trend downwards."
+            },
+            profitability: {
+                type: 'bar',
+                labels: ['Job A', 'Job B', 'Job C', 'Job D', 'Job E'],
+                datasets: [
+                    {
+                        label: 'Labor Cost',
+                        data: [120, 150, 90, 200, 110],
+                        backgroundColor: '#fbbf24' // Amber
+                    },
+                    {
+                        label: 'Material Cost',
+                        data: [50, 80, 30, 100, 40],
+                        backgroundColor: '#f87171' // Red
+                    },
+                    {
+                        label: 'Net Profit',
+                        data: [200, 120, 250, 50, 180],
+                        backgroundColor: '#059669' // Emerald
+                    }
+                ],
+                title: "Profitability Per Job",
+                insight: "Real-Time Margin Tracking",
+                explanation: "See the real margin on every job in real-time. This chart stacks costs against profit, helping you identify high-margin work and avoid 'busy fool' syndrome."
+            },
+            forecast: {
+                type: 'line',
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                datasets: [{
+                    label: 'Projected Cash Inflow',
+                    data: [12000, 15000, 11000, 18000],
+                    borderColor: '#2563eb', // Blue
+                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                    fill: true,
+                    tension: 0.3
+                }],
+                title: "Revenue Forecasting",
+                insight: "Predictable Cash Flow",
+                explanation: "Use data from scheduled jobs and quotes to predict future cash inflows with higher accuracy. This visibility allows for better resource planning and investment decisions."
+            }
+        };
+
+        // --- Core Functions ---
+
+        // 1. Navigation Scroll
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 2. Cycle Simulation Logic
+        function updateCycle(step) {
+            appState.activeCycleStep = step;
+            
+            // Update UI Styling
+            document.querySelectorAll('.cycle-btn').forEach(btn => {
+                btn.classList.remove('border-emerald-500', 'bg-emerald-50');
+                btn.classList.add('border-stone-200');
+            });
+            const activeBtn = document.querySelector(`button[onclick="updateCycle('${step}')"]`);
+            activeBtn.classList.remove('border-stone-200');
+            activeBtn.classList.add('border-emerald-500', 'bg-emerald-50');
+
+            // Update Content Panel
+            const data = cycleData[step];
+            const contentPanel = document.getElementById('cycle-content');
+            
+            contentPanel.innerHTML = `
+                <div class="animate-fade-in-up">
+                    <h4 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        ${data.title}
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-red-50 p-4 rounded-lg border border-red-100">
+                            <p class="text-xs font-bold text-red-600 uppercase mb-1">Traditional Method</p>
+                            <p class="text-stone-700 text-sm">${data.traditional}</p>
+                        </div>
+                        <div class="bg-emerald-50 p-4 rounded-lg border border-emerald-100 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 p-2 opacity-10 text-emerald-600 text-4xl">⚡</div>
+                            <p class="text-xs font-bold text-emerald-600 uppercase mb-1">The BigChange Way</p>
+                            <p class="text-slate-800 font-medium text-sm">${data.bigchange}</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-stone-200 text-center">
+                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800 text-white text-xs font-bold">
+                            <span>💡 IMPACT:</span>
+                            <span>${data.impact}</span>
+                        </span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 3. Chart Rendering Logic
+        function renderChart(chartKey) {
+            const ctx = document.getElementById('biChart').getContext('2d');
+            const data = chartData[chartKey];
+            const btnIds = { debtorDays: 'btn-debtor', profitability: 'btn-profit', forecast: 'btn-forecast' };
+
+            // Update UI Buttons
+            Object.keys(btnIds).forEach(key => {
+                const btn = document.getElementById(btnIds[key]);
+                if (key === chartKey) {
+                    btn.classList.remove('text-stone-600', 'hover:bg-stone-100');
+                    btn.classList.add('bg-emerald-100', 'text-emerald-800', 'shadow-sm');
+                } else {
+                    btn.classList.add('text-stone-600', 'hover:bg-stone-100');
+                    btn.classList.remove('bg-emerald-100', 'text-emerald-800', 'shadow-sm');
+                }
+            });
+
+            // Update Text Context
+            document.getElementById('chart-title').innerText = data.title;
+            document.getElementById('chart-insight').innerText = data.insight;
+            document.getElementById('chart-explanation').innerText = data.explanation;
+
+            // Destroy existing chart if present
+            if (appState.chartInstance) {
+                appState.chartInstance.destroy();
+            }
+
+            // Create New Chart
+            const config = {
+                type: data.type,
+                data: {
+                    labels: data.labels,
+                    datasets: data.datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                boxWidth: 8
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                            padding: 12,
+                            cornerRadius: 8,
+                            titleFont: { size: 13 },
+                            bodyFont: { size: 12 }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#f5f5f4'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                }
+            };
+
+            // Specific tweak for stacked bar
+            if (chartKey === 'profitability') {
+                config.options.scales.x.stacked = true;
+                config.options.scales.y.stacked = true;
+            }
+
+            appState.chartInstance = new Chart(ctx, config);
+        }
+
+        // Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Cycle
+            updateCycle('job');
+            
+            // Initialize Chart
+            renderChart('debtorDays');
+        });
+
+        // Add simple animation styles dynamically
+        const styleSheet = document.createElement("style");
+        styleSheet.innerText = `
+            @keyframes fadeInUp {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .animate-fade-in-up {
+                animation: fadeInUp 0.4s ease-out forwards;
+            }
+        `;
+        document.head.appendChild(styleSheet);
+
+    </script>
+    
+    <!-- Visualization & Content Choices:
+         1. Cycle Simulation (Custom HTML/JS): Chosen to represent the linear time savings described in "Accelerated Invoicing". Text blocks dynamically update to compare "Traditional" vs "BigChange" directly.
+         2. Feature Grid (HTML/Tailwind): Uses a clean card layout to organize the 4 key operational features (Pay, Disputes, Integrations, Credit Control). Icons act as visual anchors.
+         3. BI Dashboard (Chart.js): 
+            - Line Chart for Debtor Days: Visualizes the "drop significantly within 90 days" trend.
+            - Stacked Bar for Profitability: Visualizes "Profitability per Job" tracking costs vs margin.
+            - Line Chart for Forecast: Visualizes "Revenue Forecasting".
+            - Interaction: Tab buttons allow users to switch views, preventing information overload and mimicking a real dashboard experience.
+         4. Impact Summary (Grid): Extracts the key table from the report into a high-contrast footer section for a strong finish.
+         5. CONFIRMATION: NO SVG graphics used (only unicode/css). NO Mermaid JS used.
+    -->
+</body>
+</html>
